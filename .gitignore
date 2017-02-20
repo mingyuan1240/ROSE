@@ -1,0 +1,17 @@
+*~
+*.sqlite3
+__pycache__
+migrations
+venv
+.idea/
+logs/*
+!*.gitkeep
+console/migrations/*
+musicbible_server/static/*
+!__init__.py
+ENV/*
+*.json
+ENV/*
+~*
+\#*
+

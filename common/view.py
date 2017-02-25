@@ -45,7 +45,8 @@ class OrderByMixin:
 class JsonView(View):
     class DictAlias(dict):
         pass
-
+    
+    validation_class = None
     NOT_FOUND = DictAlias(result=None, status_code=NOT_FOUND, message='Not Found')
 
     def get_json_string(self, request):

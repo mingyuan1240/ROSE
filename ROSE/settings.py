@@ -116,3 +116,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+QINIU_ACCESS_KEY = '_exejFcdB_P654EdOE2_RWzlQOB2OBoBnPWb-8iW'
+QINIU_SECRET_KEY = 'kwtYqCJ0tGXxwclxe7ZjoEAKD_ar22zHOotLQF35'

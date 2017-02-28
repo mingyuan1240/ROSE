@@ -114,6 +114,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
+CORS_ORIGIN_ALLOW_ALL = True
 
 STATIC_URL = '/static/'
 QINIU_ACCESS_KEY = '_exejFcdB_P654EdOE2_RWzlQOB2OBoBnPWb-8iW'

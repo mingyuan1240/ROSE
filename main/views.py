@@ -1,6 +1,6 @@
-from common.view import JsonView
+from common.view import JsonView, ListModelView
 from django.conf import settings
-from lib.qiniu.auth import Auth
+from lib.alicloud import get_token
 from .validations import *
 from main.models import *
 
@@ -15,6 +15,7 @@ class CreatePatientView(JsonView):
         for s in (request.json.get('smears') or []):
             smear = Smear.from_dict(s)
             smear.patient = patient
+            smear.save()
             smear.images = self._save_images(s.get('images') or [])
             
         return patient.detail()
@@ -46,6 +47,7 @@ class UpdatePatientView(JsonView):
                 update_foreigns(smear, 'images', smear_d.get('images') or [])
             else:
                 smear = Smear.from_dict(smear_d)
+                smear.patient = patient
                 smear.save()
                 images = [Image.from_dict(image) for image in smear_d.get('images') or []]
                 [im.save() for im in images]
@@ -69,10 +71,13 @@ class DeletePatientView(JsonView):
         
 class GetQiniuTokenView(JsonView):
     def get(self, request):
-        bucket = request.GET['bucket']
-        key = request.GET['filename']
-        expires = int(request.GET['expires'])
+        return get_token()
+
+class ListPatientView(ListModelView):
+    def get_model_list(self, request):
+        query = Patient.objects.all()
+        p = request.GET.get('pathology')
+        if p:
+            query = query.filter(pathology_diagnosis__like=p)
+        return query
         
-        auth = Auth(settings.QINIU_ACCESS_KEY, settings.QINIU_SECRET_KEY)
-        token = auth.upload_token(bucket, key, expires)
-        return token

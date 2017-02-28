@@ -3,7 +3,6 @@ import re
 from common.validate import Validation
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.core.paginator import Paginator
-from django.conf import settings
 from django.views import View
 from django.http import JsonResponse, HttpResponse
 import json
@@ -12,36 +11,6 @@ from common.validate.exceptions import ValidationError
 import logging
 logger = logging.getLogger('default')
 
-class PageParamaterParserMixin:
-    def _is_num_str(self, s):
-        return bool(re.match(r'\d+', s))
-    
-    def dispatch(self, request, *args, **kwargs):
-        page = request.GET.get('page')
-        if not page or not self._is_num_str(page):
-            self.page = 1
-        else:
-            self.page = int(page)
-
-        pagesize = request.GET.get('pageSize')
-        if not pagesize or not self._is_num_str(pagesize):
-            self.pagesize = settings.DEFAULT_PAGESIZE
-        else:
-            self.pagesize = int(pagesize)
-
-        return super(PageParamaterParserMixin, self).dispatch(request, *args, **kwargs)
-
-class OrderByMixin:
-    def dispatch(self, request, *args, **kwargs):
-        orderby = request.GET.get('orderby')
-        if orderby == 'create_time':
-            self.orderby = 'create_time'
-        elif orderby == 'weight':
-            self.orderby = 'weight'
-        else:
-            self.orderby = orderby
-        return super(OrderByMixin, self).dispatch(request, *args, **kwargs)
-    
 class JsonView(View):
     class DictAlias(dict):
         pass
@@ -122,24 +91,19 @@ class ListModelView(JsonView):
 
         pagesize = request.GET.get('pageSize')
         if not pagesize or not self._is_num_str(pagesize):
-            self.pagesize = settings.DEFAULT_PAGESIZE
+            self.pagesize = 20
         else:
             self.pagesize = int(pagesize)
 
         orderby = request.GET.get('orderby')
         if orderby:
             orderby = orderby.replace('create_time', '-create_timestamp')
-            orderby = orderby.replace('weight', '-recommend_level')
         self.orderby = orderby
 
     def get(self, request):
         self._parse_parameters(request)
-        try:
-            total, models = self.get_model_list(request)
-        except Exception as e:
-            logger.warning('get model list failed: %s', e)
-            return JsonView.json_result(None, 500, str(e))
-        
+        models = self.get_model_list(request)
+        total = models.count()
         models = self.sort_model_list(models)
         models = self.paging(total, models)
         models = self.transfer_model_list(models)
@@ -152,13 +116,9 @@ class ListModelView(JsonView):
             return []
         paginator = Paginator(models, self.pagesize)
         return paginator.page(self.page).object_list
-        
-    def get_model_list(self, request):
-        models = self.model_type.objects.filter(is_deleted=False)
-        return (models.count(), models)
 
     def transfer_model_list(self, models):
-        return [m.to_dict() for m in models]
+        return [m.brief() for m in models]
 
     def sort_model_list(self, models):
         if self.orderby:

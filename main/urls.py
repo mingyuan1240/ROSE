@@ -11,5 +11,6 @@ urlpatterns = [
         GET = views.PatientDetailView.as_view(),
         DELETE = views.DeletePatientView.as_view(),
         PUT = views.UpdatePatientView.as_view()
-    ))
+    )),
+    url(r'^v0/patient/list$', views.ListPatientView.as_view())
 ]

@@ -9,7 +9,7 @@ class Patient(ConvertMixin, models.Model):
     age = models.SmallIntegerField(null=True)
     gender = models.SmallIntegerField(null=True)
     cell_diagnosis = models.TextField()
-    pathology_diagnosis = models.TextField()
+    pathology_diagnosis = models.CharField(max_length=256, null=True)
     images = models.ManyToManyField('Image')
     create_timestamp = models.DateTimeField(auto_now_add=True)
 

@@ -12,6 +12,7 @@ class Patient(ConvertMixin, models.Model):
     pathology_diagnosis = models.CharField(max_length=256, null=True)
     images = models.ManyToManyField('Image')
     create_timestamp = models.DateTimeField(auto_now_add=True)
+    remark = models.TextField(null=True)
 
     class Meta:
         ordering = ['-create_timestamp']

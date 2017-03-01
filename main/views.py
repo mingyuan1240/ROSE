@@ -62,7 +62,7 @@ class PatientDetailView(JsonView):
             return JsonView.NOT_FOUND
             
 class DeletePatientView(JsonView):
-    def detele(self, request, _id):
+    def delete(self, request, _id):
         try:
            Patient.objects.get(pk=_id).delete()
            return 'ok'            
@@ -78,6 +78,6 @@ class ListPatientView(ListModelView):
         query = Patient.objects.all()
         p = request.GET.get('pathology')
         if p:
-            query = query.filter(pathology_diagnosis__like=p)
+            query = query.filter(pathology_diagnosis=p)
         return query
         

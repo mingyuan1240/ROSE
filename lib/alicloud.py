@@ -9,7 +9,7 @@ from hashlib import sha1 as sha
 accessKeyId = 'LTAITVHjncC57cMb'
 accessKeySecret = 'ry9ga9d729OryK1OvhECu6ehdhwLeH'
 host = 'http://rosewebsite.oss-cn-shanghai.aliyuncs.com'
-expire_time = 60
+expire_time = 6000
 
 def get_iso_8601(expire):
     gmt = datetime.datetime.fromtimestamp(expire).isoformat()
@@ -24,7 +24,7 @@ def get_token():
     policy_dict = {}
     policy_dict['expiration'] = expire
     condition_array = []
-    array_item = ["content-length-range",0,1048576000]
+    array_item = ["content-length-range", 0, 1048576000]
     condition_array.append(array_item)
     policy_dict['conditions'] = condition_array
     policy = json.dumps(policy_dict).strip()

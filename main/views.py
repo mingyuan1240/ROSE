@@ -28,7 +28,7 @@ class CreatePatientView(JsonView):
 class UpdatePatientView(JsonView):
     def put(self, request, _id):
         data = request.json
-        patient = Patient.objects.filter(pk=_id)
+        patient = Patient.objects.filter(pk=_id).first()
         if not patient:
             return JsonView.NOT_FOUND
         patient.merge(data)

@@ -33,6 +33,7 @@ class UpdatePatientView(JsonView):
         if not patient:
             return JsonView.NOT_FOUND
         patient.merge(data)
+        patient.save()
         update_foreigns(patient, 'images', (data.get('images') or []))
         self._update_smears(patient, data.get('smears') or [])
         return patient.detail()
@@ -45,6 +46,7 @@ class UpdatePatientView(JsonView):
             if smear_d.get('id'):
                 smear = Smear.objects.get(pk=smear_d['id'])
                 smear.merge(smear_d)
+                smear.save()
                 update_foreigns(smear, 'images', smear_d.get('images') or [])
             else:
                 smear = Smear.from_dict(smear_d)
@@ -53,7 +55,6 @@ class UpdatePatientView(JsonView):
                 images = [Image.from_dict(image) for image in smear_d.get('images') or []]
                 [im.save() for im in images]
                 smear.images = images
-        
 
 class PatientDetailView(JsonView):
     def get(self, request, _id):

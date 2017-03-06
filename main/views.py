@@ -1,4 +1,5 @@
 from common.view import JsonView, ListModelView
+from common.models import update_foreigns
 from django.conf import settings
 from lib.alicloud import get_token
 from .validations import *
